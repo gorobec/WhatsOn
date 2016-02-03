@@ -15,6 +15,7 @@ public class KinoTheatreXMLParser {
     private static final String SOURCE = "src/resources/afisha.xml";
 
 
+
     public static Document createDOM() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = dbf.newDocumentBuilder();

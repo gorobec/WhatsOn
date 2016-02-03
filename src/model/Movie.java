@@ -3,28 +3,25 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Movie implements Comparable<Movie> {
     private int id;
     private String title;
     private String originalTitle;
     private int year;
-    private ArrayList<String> genres;
+    private List<String> genres;
     private String budget;
-    private ArrayList<Person> directors;
-    private ArrayList<Person> actors;
-    private ArrayList<String> countries;
+    private List<Person> directors;
+    private List<Person> actors;
+    private List<String> countries;
     private int ageLimit;
-    //    todo maybe String
     private int duration;
     private LocalDate wordPremiere;
     private LocalDate uaPremiere;
     private String description;
     private String studio;
-
-//    todo Image
     private String posterURL;
-    private volatile int hashCode = 0;
 
 //todo compareTo
     @Override
