@@ -55,8 +55,9 @@ public class Test {
 
         Set<Map.Entry<Integer, String>> entrySet = gen.entrySet();
         for (Map.Entry<Integer, String> integerStringEntry : entrySet) {
-            System.out.printf("Index - %d, value - %s\n", integerStringEntry.getKey(), integerStringEntry.getValue());
+            System.out.printf("Index - %2d, value - %s\n", integerStringEntry.getKey(), integerStringEntry.getValue());
         }
+
 
     }
 }
