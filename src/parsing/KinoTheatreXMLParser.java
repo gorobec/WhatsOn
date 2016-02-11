@@ -1,5 +1,6 @@
 package parsing;
 
+import controller.Controller;
 import model.Cinema;
 import model.Movie;
 import model.Person;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 public class KinoTheatreXMLParser {
     private static final String SOURCE = "src/resources/afisha.xml";
+    private static Controller controller;
 
     private static Map<Integer, Cinema> cinemas = new HashMap<>();
     private static Map<Integer, Movie> movies = new HashMap<>();
