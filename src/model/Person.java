@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by gorobec on 29.01.16.
+ * @author Yevgenij Vorobiei
  */
 public class Person {
     private String lastnameOrigin;
@@ -45,7 +45,6 @@ public class Person {
         return firstname.equals(person.firstname);
 
     }
-
     @Override
     public int hashCode() {
         int result = lastnameOrigin.hashCode();
@@ -53,5 +52,15 @@ public class Person {
         result = 31 * result + firstnameOrigin.hashCode();
         result = 31 * result + firstname.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "lastnameOrigin='" + lastnameOrigin + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", firstnameOrigin='" + firstnameOrigin + '\'' +
+                ", firstname='" + firstname + '\'' +
+                '}';
     }
 }

@@ -1,10 +1,14 @@
 package model;
 
 /**
- * Created by gorobec on 29.01.16.
+ * @author Yevgenij Vorobiei
  */
-public class Hall {
-    private int id;
-    private String name;
+public final class Hall {
+    private final int id;
+    private final String name;
 
+    public Hall(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

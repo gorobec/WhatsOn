@@ -2,25 +2,23 @@ package model;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Movie implements Comparable<Movie> {
-    private final int id;
     private final String title;
     private final String originalTitle;
     private final int year;
-    private final List<String> genres;
-    private final String budget;
-    private final List<Person> directors;
-    private final List<Person> actors;
-    private final List<String> countries;
+    private final List<Integer> genresId;
+    private final Integer budget;
+    private final List<Integer> directorsId;
+    private final List<Integer> actorsId;
+    private final List<Integer> countriesId;
     private final int ageLimit;
     private final int duration;
     private final LocalDate wordPremiere;
     private final LocalDate uaPremiere;
     private final String description;
-    private final String studio;
+    private final List<Integer> studios;
     private final String posterURL;
 
 /*
@@ -31,24 +29,20 @@ public class Movie implements Comparable<Movie> {
         private String title;
         private String originalTitle;
         private int year;
-        private List<String> genres;
-        private String budget;
-        private List<Person> directors;
-        private List<Person> actors;
-        private List<String> countries;
+        private List<Integer> genresId;
+        private Integer budget;
+        private List<Integer> directorsId;
+        private List<Integer> actorsId;
+        private List<Integer> countriesId;
         private int ageLimit;
         private int duration;
         private LocalDate wordPremiere;
         private LocalDate uaPremiere;
         private String description;
-        private String studio;
+        private List<Integer> studios;
         private String posterURL;
 
 
-        public Builder id(int id){
-            this.id = id;
-            return this;
-        }
         public Builder title(String title){
             this.title = title;
             return this;
@@ -57,28 +51,28 @@ public class Movie implements Comparable<Movie> {
             this.originalTitle = originalTitle;
             return this;
         }
-        public Builder title(int year){
+        public Builder year(int year){
             this.year = year;
             return this;
         }
-        public Builder title(List<String> genres){
-            this.genres = genres;
+        public Builder genres(List<Integer> genresId){
+            this.genresId = genresId;
             return this;
         }
-        public Builder budget(String budget){
+        public Builder budget(Integer budget){
            this.budget = budget;
             return this;
         }
-        public Builder directors(List<Person> directors){
-            this.directors = directors;
+        public Builder directors(List<Integer> directorsId){
+            this.directorsId = directorsId;
             return this;
         }
-        public Builder actors(List<Person> actors){
-            this.actors = actors;
+        public Builder actors(List<Integer> actorsId){
+            this.actorsId = actorsId;
             return this;
         }
-        public Builder countries(List<String> countries){
-            this.countries = countries;
+        public Builder countries(List<Integer> countriesId){
+            this.countriesId = countriesId;
             return this;
         }
         public Builder ageLimit(int ageLimit){
@@ -97,8 +91,8 @@ public class Movie implements Comparable<Movie> {
             this.uaPremiere = uaPremiere;
             return this;
         }
-        public Builder studio(String studio){
-            this.studio = studio;
+        public Builder studios(List<Integer> studios){
+            this.studios = studios;
             return this;
         }
         public Builder posterURL(String posterURL){
@@ -116,21 +110,20 @@ public class Movie implements Comparable<Movie> {
     }
 
     private Movie(Builder builder){
-        id = builder.id;
         title = builder.title;
         originalTitle = builder.originalTitle;
         year = builder.year;
-        genres = builder.genres;
+        genresId = builder.genresId;
         budget = builder.budget;
-        directors = builder.directors;
-        actors = builder.actors;
-        countries = builder.countries;
+        directorsId = builder.directorsId;
+        actorsId = builder.actorsId;
+        countriesId = builder.countriesId;
         ageLimit = builder.ageLimit;
         duration = builder.duration;
         wordPremiere = builder.wordPremiere;
         uaPremiere = builder.uaPremiere;
         description = builder.description;
-        studio = builder.studio;
+        studios = builder.studios;
         posterURL = builder.posterURL;
     }
 
@@ -138,5 +131,26 @@ public class Movie implements Comparable<Movie> {
     @Override
     public int compareTo(Movie o) {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "title='" + title + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", year=" + year +
+                ", genresId=" + genresId +
+                ", budget=" + budget +
+                ", directorsId=" + directorsId +
+                ", actorsId=" + actorsId +
+                ", countriesId=" + countriesId +
+                ", ageLimit=" + ageLimit +
+                ", duration=" + duration +
+                ", wordPremiere=" + wordPremiere +
+                ", uaPremiere=" + uaPremiere +
+                ", description='" + description + '\'' +
+                ", studios=" + studios +
+                ", posterURL='" + posterURL + '\'' +
+                '}';
     }
 }
