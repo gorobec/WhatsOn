@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,21 +127,29 @@ public class KinoTheatreXMLParser {
                                 budget = Integer.parseInt(movieElement.getTextContent());
                             }
                             break;
-                        case "intro":
-                            description = movieElement.getTextContent();
+                        // todo DRY
+                        case "year":
+                            if(!movieElement.getTextContent().equals("")) {
+                                year = Integer.parseInt(movieElement.getTextContent());
+                            }
                             break;
+                        case "intro":
+                        description = movieElement.getTextContent();
+                        break;
                         case "posters":
                             posterURL = getPosterURL(movieElement);
                             break;
                         case "genres":
-                            genres = getGenres(movieElement);
-//                            todo
+                            genres = getElementIds(movieElement);
                             break;
                         case "countries":
-//                            todo
+                            countries = getElementIds(movieElement);
                             break;
                         case "studios":
-//                            todo
+                            studios = getElementIds(movieElement);
+                            break;
+                        case "persons":
+//                            todo parser
                             break;
                     }
                 }
@@ -156,16 +163,16 @@ public class KinoTheatreXMLParser {
         return movies;
     }
 
-    private static List<Integer> getGenres(Node movieElement) {
-        List<Integer> genres = new ArrayList<>();
-        String genresString = movieElement.getTextContent();
-        if(!genresString.equals("")) {
-            String[] genresArray = movieElement.getTextContent().split(",");
-            for (int i = 0; i < genresArray.length; i++) {
-                genres.add(Integer.parseInt(genresArray[i]));
+    private static List<Integer> getElementIds(Node movieElement) {
+        List<Integer> id = new ArrayList<>();
+        String idString = movieElement.getTextContent();
+        if(!idString.equals("")) {
+            String[] idArray = movieElement.getTextContent().split(",");
+            for (int i = 0; i < idArray.length; i++) {
+                id.add(Integer.parseInt(idArray[i]));
             }
         }
-        return genres;
+        return id;
     }
 
     private static String getPosterURL(Node posterNode) {
