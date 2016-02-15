@@ -4,10 +4,8 @@ import controller.Controller;
 import model.Cinema;
 import model.Movie;
 import model.Person;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import model.Show;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -16,18 +14,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.util.*;
 
 
 public class KinoTheatreXMLParser {
     private static final String SOURCE = "src/resources/afisha.xml";
-//    todo capacities
+    //    todo capacities
     private static final int initialMapCapacity = 52;
 
-    public static void createDOM() throws ParserConfigurationException, IOException, SAXException {
+    public static void parseXML() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
         Document document = documentBuilder.parse(new File(SOURCE));
@@ -37,7 +33,7 @@ public class KinoTheatreXMLParser {
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                switch (child.getNodeName()){
+                switch (child.getNodeName()) {
                     case "genres":
                         Controller.setGenres(simpleParser(child.getChildNodes()));
                         break;
@@ -54,13 +50,11 @@ public class KinoTheatreXMLParser {
                         Controller.setStudios(simpleParser(child.getChildNodes()));
                         break;
                     case "shows":
-                        child.getChildNodes();
+                        showsParser(child.getChildNodes());
 //                        todo parser
-//                        must be the last
                         break;
                     case "films":
                         Controller.setMovies(moviesParser(child.getChildNodes()));
-//                        todo parser
                         break;
                     case "cinemas":
                         Controller.setCinemas(cinemasParser(child.getChildNodes()));
@@ -73,11 +67,94 @@ public class KinoTheatreXMLParser {
         }
     }
 
+    private static void showsParser(NodeList showNodes) {
+        Map<Integer, List<Show>> showsByCinema = new HashMap<>();
+        Map<Integer, List<Show>> showsByMovie = new HashMap<>();
+        for (int i = 0; i < showNodes.getLength(); i++) {
+            Show seance = new Show();
+            Node show = showNodes.item(i);
+            if(show.getNodeType() == Node.ELEMENT_NODE) {
+                NamedNodeMap showAttributes = show.getAttributes();
+                int movieId = Integer.parseInt(showAttributes.item(1).getNodeValue());
+                int cinemaId = Integer.parseInt(showAttributes.item(0).getNodeValue());
+                seance.setCinemaID(cinemaId);
+                seance.setMovieID(movieId);
+                seance.setHallID(Integer.parseInt(showAttributes.item(2).getNodeValue()));
+                NodeList showElements = show.getChildNodes();
+                for (int j = 0; j < showElements.getLength(); j++) {
+                    Node showElement = showElements.item(j);
+                    if(showElement != null){
+                        switch (showElement.getNodeName()){
+                            case "begin":
+                                seance.setDateBegin(LocalDate.parse(showElement.getTextContent()));
+                                break;
+                            case "end":
+                                seance.setDateEnd(LocalDate.parse(showElement.getTextContent()));
+                                break;
+                            case "times":
+                                seance.setSeancesTime3D(showTimesParser(showElement, seance));
+                                break;
+
+                        }
+                    }
+                }
+                putShow(showsByCinema, cinemaId, seance);
+                putShow(showsByMovie, movieId, seance);
+            }
+        }
+        Controller.setShowsByCinema(showsByCinema);
+        Controller.setShowsByMovie(showsByMovie);
+    }
+
+    private static void putShow(Map<Integer, List<Show>> shows, int Id, Show seance) {
+        if(shows.containsKey(Id)){
+            shows.get(Id).add(seance);
+        }else {
+            List<Show> seances = new ArrayList<>();
+            seances.add(seance);
+            shows.put(Id, seances);
+        }
+    }
+
+    private static Map<LocalTime, Boolean> showTimesParser(Node times, Show seance) {
+        List<Double> prices = new ArrayList<>();
+        Map<LocalTime, Boolean> seancesTime3D = new TreeMap<>();
+        NodeList timeNodes = times.getChildNodes();
+        for (int i = 0; i < timeNodes.getLength(); i++) {
+            Node time = timeNodes.item(i);
+            if(time.getNodeType() == Node.ELEMENT_NODE) {
+                LocalTime seanceTime = LocalTime.parse(time.getAttributes().item(1).getNodeValue());
+                boolean is3D = time.getAttributes().item(0).getNodeValue().equals("1");
+                seancesTime3D.put(seanceTime, is3D);
+                NodeList timeElements = time.getChildNodes();
+                for (int j = 0; j < timeElements.getLength(); j++) {
+                    Node timeElement  = timeElements.item(j);
+                    if(timeElement.getNodeType() == Node.ELEMENT_NODE &&
+                            timeElement.getNodeName().equals("prices")){
+                        String[] pricesString;
+                        if(timeElement.getTextContent().contains(",")) {
+                            pricesString = timeElement.getTextContent().split(", ");
+                        } else {
+                            pricesString = timeElement.getTextContent().split("-");
+                        }
+                        for (String price : pricesString) {
+                            if(!price.equals("")) {
+                                prices.add(Double.parseDouble(price));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        seance.setPrice(prices);
+        return seancesTime3D;
+    }
+
     private static Map<Integer, Movie> moviesParser(NodeList moviesList) {
         Map<Integer, Movie> movies = new HashMap<>(initialMapCapacity);
         for (int i = 0; i < moviesList.getLength(); i++) {
             Node movieNode = moviesList.item(i);
-            if(movieNode.getNodeType() == Node.ELEMENT_NODE){
+            if (movieNode.getNodeType() == Node.ELEMENT_NODE) {
                 NodeList movieElements = movieNode.getChildNodes();
                 int movieId = Integer.parseInt(movieNode.getAttributes().item(0).getNodeValue());
                 String title = null;
@@ -85,8 +162,7 @@ public class KinoTheatreXMLParser {
                 int year = 0;
                 List<Integer> genres = null;
                 Integer budget = null;
-                List<Integer> directors = null;
-                List<Integer> actors = null;
+                Map<Integer, List<Integer>> persons = null;
                 List<Integer> countries = null;
                 int ageLimit = 0;
                 int duration = 0;
@@ -97,45 +173,38 @@ public class KinoTheatreXMLParser {
                 String posterURL = null;
                 for (int j = 0; j < movieElements.getLength(); j++) {
                     Node movieElement = movieElements.item(j);
-                    switch (movieElement.getNodeName()){
+                    switch (movieElement.getNodeName()) {
                         case "title":
                             originalTitle = movieElement.getAttributes().item(0).getNodeValue();
                             title = movieElement.getTextContent();
                             break;
                         case "duration":
-                        if(!movieElement.getTextContent().equals("")) {
-                            duration = Integer.parseInt(movieElement.getTextContent());
-                        }
+                            if (!isEmpty(movieElement))
+                                duration = Integer.parseInt(movieElement.getTextContent());
                             break;
                         case "premiere":
-                            if(!movieElement.getTextContent().equals("")) {
+                            if (!isEmpty(movieElement))
                                 uaPremiere = LocalDate.parse(movieElement.getTextContent());
-                            }
                             break;
                         case "worldpremiere":
-                            if(!movieElement.getTextContent().equals("")) {
+                            if (!isEmpty(movieElement))
                                 wordPremiere = LocalDate.parse(movieElement.getTextContent());
-                            }
                             break;
                         case "age_limit":
-                            if(!movieElement.getTextContent().equals("")) {
+                            if (!isEmpty(movieElement))
                                 ageLimit = Integer.parseInt(movieElement.getTextContent());
-                            }
                             break;
                         case "budget":
-                            if(!movieElement.getTextContent().equals("")) {
+                            if (!isEmpty(movieElement))
                                 budget = Integer.parseInt(movieElement.getTextContent());
-                            }
                             break;
-                        // todo DRY
                         case "year":
-                            if(!movieElement.getTextContent().equals("")) {
+                            if (!isEmpty(movieElement))
                                 year = Integer.parseInt(movieElement.getTextContent());
-                            }
                             break;
                         case "intro":
-                        description = movieElement.getTextContent();
-                        break;
+                            description = movieElement.getTextContent();
+                            break;
                         case "posters":
                             posterURL = getPosterURL(movieElement);
                             break;
@@ -149,24 +218,55 @@ public class KinoTheatreXMLParser {
                             studios = getElementIds(movieElement);
                             break;
                         case "persons":
-//                            todo parser
+                            persons = getPersons(movieElement);
                             break;
                     }
                 }
                 movies.put(movieId,
-                        new Movie.Builder().actors(actors).ageLimit(ageLimit).budget(budget).
-                                countries(countries).description(description).directors(directors).
-                                duration(duration).genres(genres).originalTitle(originalTitle).posterURL(posterURL).
-                                studios(studios).title(title).uaPremiere(uaPremiere).year(year).wordPremiere(wordPremiere).build());
+                        new Movie.Builder().ageLimit(ageLimit).budget(budget).
+                                countries(countries).description(description).
+                                duration(duration).genres(genres).originalTitle(originalTitle).
+                                persons(persons).posterURL(posterURL).studios(studios).title(title).
+                                uaPremiere(uaPremiere).year(year).wordPremiere(wordPremiere).build());
             }
         }
         return movies;
     }
 
+    private static Map<Integer, List<Integer>> getPersons(Node persons) {
+        Map<Integer, List<Integer>> filmCrew = new HashMap<>();
+        NodeList personNodes = persons.getChildNodes();
+        for (int i = 0; i < personNodes.getLength(); i++) {
+            Node personNode = personNodes.item(i);
+            if (personNode.getNodeType() == Node.ELEMENT_NODE) {
+                NamedNodeMap personAttributes = personNode.getAttributes();
+                int professionId = Integer.parseInt(personAttributes.item(1).getNodeValue());
+                int personId = Integer.parseInt(personAttributes.item(0).getNodeValue());
+                putPerson(filmCrew, professionId, personId);
+            }
+        }
+        return filmCrew;
+    }
+
+    private static void putPerson(Map<Integer, List<Integer>> filmCrew, int professionId, int personId) {
+       if(filmCrew.containsKey(professionId)){
+           filmCrew.get(professionId).add(personId);
+       }else {
+           List<Integer> personsId = new ArrayList<>();
+           personsId.add(personId);
+           filmCrew.put(professionId, personsId);
+       }
+
+    }
+
+    private static boolean isEmpty(Node movieElement) {
+        return movieElement.getTextContent().equals("");
+    }
+
     private static List<Integer> getElementIds(Node movieElement) {
         List<Integer> id = new ArrayList<>();
         String idString = movieElement.getTextContent();
-        if(!idString.equals("")) {
+        if (!idString.equals("")) {
             String[] idArray = movieElement.getTextContent().split(",");
             for (int i = 0; i < idArray.length; i++) {
                 id.add(Integer.parseInt(idArray[i]));
@@ -175,11 +275,11 @@ public class KinoTheatreXMLParser {
         return id;
     }
 
-    private static String getPosterURL(Node posterNode) {
-        NodeList postersElements = posterNode.getChildNodes();
+    private static String getPosterURL(Node posters) {
+        NodeList postersElements = posters.getChildNodes();
         for (int i = 0; i < postersElements.getLength(); i++) {
-            if(postersElements.item(i).getNodeType() == Node.ELEMENT_NODE && postersElements.item(i).getAttributes().getNamedItem("order").getNodeValue().equals("1")) {
-               return postersElements.item(i).getAttributes().getNamedItem("src").getNodeValue();
+            if (postersElements.item(i).getNodeType() == Node.ELEMENT_NODE && postersElements.item(i).getAttributes().getNamedItem("order").getNodeValue().equals("1")) {
+                return postersElements.item(i).getAttributes().getNamedItem("src").getNodeValue();
             }
 
         }
@@ -190,7 +290,7 @@ public class KinoTheatreXMLParser {
         Map<Integer, Person> persons = new HashMap<>(initialMapCapacity);
         for (int i = 0; i < personsList.getLength(); i++) {
             Node personeNode = personsList.item(i);
-            if(personeNode.getNodeType() == Node.ELEMENT_NODE){
+            if (personeNode.getNodeType() == Node.ELEMENT_NODE) {
                 NodeList personElements = personeNode.getChildNodes();
                 int personId = Integer.parseInt(personeNode.getAttributes().item(0).getNodeValue());
                 String lastnameOrigin = null;
@@ -199,12 +299,12 @@ public class KinoTheatreXMLParser {
                 String firstname = null;
                 for (int j = 0; j < personElements.getLength(); j++) {
                     Node personElement = personElements.item(j);
-                    switch (personElement.getNodeName()){
+                    switch (personElement.getNodeName()) {
                         case "lastname":
                             lastnameOrigin = personElement.getAttributes().item(0).getNodeValue();
                             lastname = personElement.getTextContent();
                             break;
-                        case  "firstname":
+                        case "firstname":
                             firstnameOrigin = personElement.getAttributes().item(0).getNodeValue();
                             firstname = personElement.getTextContent();
                     }
@@ -263,12 +363,12 @@ public class KinoTheatreXMLParser {
         NodeList hallNodes = hallsNode.getChildNodes();
         for (int i = 0; i < hallNodes.getLength(); i++) {
             Node hall = hallNodes.item(i);
-            if(hall.getNodeType() == Node.ELEMENT_NODE){
+            if (hall.getNodeType() == Node.ELEMENT_NODE) {
                 int hallId = Integer.parseInt(hall.getAttributes().item(0).getNodeValue());
                 NodeList hallElements = hall.getChildNodes();
                 for (int j = 0; j < hallElements.getLength(); j++) {
                     Node hallElement = hallElements.item(j);
-                    if (hallElement != null && hallElement.getNodeName().equals("title")){
+                    if (hallElement != null && hallElement.getNodeName().equals("title")) {
                         halls.put(hallId, hallElements.item(j).getTextContent());
                         break;
                     }
@@ -294,6 +394,7 @@ public class KinoTheatreXMLParser {
         }
         return map;
     }
+
     private static Map<Integer, String> twoAttributesParser(NodeList list) {
         Map<Integer, String> map = new HashMap<>(initialMapCapacity);
         for (int j = 0; j < list.getLength(); j++) {

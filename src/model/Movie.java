@@ -3,6 +3,7 @@ package model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class Movie implements Comparable<Movie> {
     private final String title;
@@ -10,8 +11,7 @@ public class Movie implements Comparable<Movie> {
     private final int year;
     private final List<Integer> genresId;
     private final Integer budget;
-    private final List<Integer> directorsId;
-    private final List<Integer> actorsId;
+    private final Map<Integer, List<Integer>> persons;
     private final List<Integer> countriesId;
     private final int ageLimit;
     private final int duration;
@@ -31,7 +31,7 @@ public class Movie implements Comparable<Movie> {
         private int year;
         private List<Integer> genresId;
         private Integer budget;
-        private List<Integer> directorsId;
+        private Map<Integer, List<Integer>> persons;
         private List<Integer> actorsId;
         private List<Integer> countriesId;
         private int ageLimit;
@@ -63,12 +63,8 @@ public class Movie implements Comparable<Movie> {
            this.budget = budget;
             return this;
         }
-        public Builder directors(List<Integer> directorsId){
-            this.directorsId = directorsId;
-            return this;
-        }
-        public Builder actors(List<Integer> actorsId){
-            this.actorsId = actorsId;
+        public Builder persons(Map<Integer, List<Integer>> persons){
+            this.persons = persons;
             return this;
         }
         public Builder countries(List<Integer> countriesId){
@@ -115,8 +111,7 @@ public class Movie implements Comparable<Movie> {
         year = builder.year;
         genresId = builder.genresId;
         budget = builder.budget;
-        directorsId = builder.directorsId;
-        actorsId = builder.actorsId;
+        persons = builder.persons;
         countriesId = builder.countriesId;
         ageLimit = builder.ageLimit;
         duration = builder.duration;
@@ -141,8 +136,7 @@ public class Movie implements Comparable<Movie> {
                 ", year=" + year +
                 ", genresId=" + genresId +
                 ", budget=" + budget +
-                ", directorsId=" + directorsId +
-                ", actorsId=" + actorsId +
+                ", persons=" + persons +
                 ", countriesId=" + countriesId +
                 ", ageLimit=" + ageLimit +
                 ", duration=" + duration +

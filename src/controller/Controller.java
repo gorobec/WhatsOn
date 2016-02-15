@@ -3,8 +3,10 @@ package controller;
 import model.Cinema;
 import model.Movie;
 import model.Person;
+import model.Show;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -21,6 +23,24 @@ public class Controller implements IUserController {
     private static Map<Integer, String> countries;
     private static Map<Integer, String> cities;
     private static Map<Integer, String> studios;
+    private static Map<Integer, List<Show>> showsByCinema;
+    private static Map<Integer, List<Show>> showsByMovie;
+
+    public static Map<Integer, List<Show>> getShowsByCinema() {
+        return showsByCinema;
+    }
+
+    public static void setShowsByCinema(Map<Integer, List<Show>> showsByCinema) {
+        Controller.showsByCinema = showsByCinema;
+    }
+
+    public static Map<Integer, List<Show>> getShowsByMovie() {
+        return showsByMovie;
+    }
+
+    public static void setShowsByMovie(Map<Integer, List<Show>> showsByMovie) {
+        Controller.showsByMovie = showsByMovie;
+    }
 
     public static Map<Integer, Cinema> getCinemas() {
         return cinemas;

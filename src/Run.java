@@ -2,6 +2,7 @@ import controller.Controller;
 import model.Cinema;
 import model.Movie;
 import model.Person;
+import model.Show;
 import org.xml.sax.SAXException;
 import parsing.KinoTheatreXMLParser;
 import parsing.XMLLoader;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,8 +33,8 @@ public class Run {
                 e.printStackTrace();
             }
         }
-        KinoTheatreXMLParser.createDOM();
-        /*Iterator<Map.Entry<Integer, String>> iterator = Controller.getGenres().entrySet().iterator();
+        KinoTheatreXMLParser.parseXML();
+        Iterator<Map.Entry<Integer, String>> iterator = Controller.getGenres().entrySet().iterator();
         System.out.println("Genres:");
         System.out.println(Controller.getGenres().size());
         while (iterator.hasNext()){
@@ -80,7 +82,7 @@ public class Run {
         while (iterator7.hasNext()){
             Map.Entry<Integer, Person> entry = iterator7.next();
             System.out.printf("Id - %3s, %s\n", entry.getKey(), entry.getValue());
-        }*/
+        }
         Iterator<Map.Entry<Integer, Movie>> iterator8 = Controller.getMovies().entrySet().iterator();
         System.out.println("Movies:");
         System.out.println(Controller.getMovies().size());
@@ -88,13 +90,27 @@ public class Run {
             Map.Entry<Integer, Movie> entry = iterator8.next();
             System.out.printf("Id - %3s, %s\n", entry.getKey(), entry.getValue());
         }
-        /*Iterator<Map.Entry<Integer, String>> iterator9 = Controller.getHalls().entrySet().iterator();
+        Iterator<Map.Entry<Integer, String>> iterator9 = Controller.getHalls().entrySet().iterator();
         System.out.println("Halls:");
         System.out.println(Controller.getHalls().size());
         while (iterator9.hasNext()){
             Map.Entry<Integer, String> entry = iterator9.next();
             System.out.printf("Id - %3s, hall - %s\n", entry.getKey(), entry.getValue());
-        }*/
+        }
+        Iterator<Map.Entry<Integer, List<Show>>> iterator10 = Controller.getShowsByCinema().entrySet().iterator();
+        System.out.println("Shows:");
+        System.out.println(Controller.getShowsByCinema().size());
+        while (iterator10.hasNext()) {
+            Map.Entry<Integer, List<Show>> entry = iterator10.next();
+            System.out.printf("CinemaId - %3s, shows - %s\n", entry.getKey(), entry.getValue());
+        }
+        Iterator<Map.Entry<Integer, List<Show>>> iterator11 = Controller.getShowsByMovie().entrySet().iterator();
+        System.out.println("Shows:");
+        System.out.println(Controller.getShowsByMovie().size());
+        while (iterator11.hasNext()) {
+            Map.Entry<Integer, List<Show>> entry = iterator11.next();
+            System.out.printf("MovieId - %3s, shows - %s\n", entry.getKey(), entry.getValue());
+        }
     }
 
     private static boolean needUpdate() {
