@@ -6,6 +6,7 @@ import model.Person;
 import model.Show;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -116,12 +117,39 @@ public class Controller implements IUserController {
 
     @Override
     public TreeSet<Movie> viewAllMovies() {
-        return null;
+
+        TreeSet<Movie> movies = new TreeSet<>();
+        Iterator<Map.Entry<Integer, Movie>> iterator = getMovies().entrySet().iterator();
+        while (iterator.hasNext()){
+            movies.add(iterator.next().getValue());
+        }
+
+        return movies;
     }
 
     @Override
-    public TreeSet<Cinema> viewAllCinemas() {
-        return null;
+    public TreeSet<Cinema> viewAllCinemas(String city) {
+        int cityId = findKey(Controller.getCities(), city);
+        TreeSet<Cinema> cinemas = new TreeSet<>();
+        Iterator<Map.Entry<Integer, Cinema>> iterator = getCinemas().entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<Integer, Cinema> entry = iterator.next();
+            if(entry.getValue().getCityId() == cityId) {
+                cinemas.add(entry.getValue());
+            }
+        }
+
+        return cinemas;
+    }
+
+    private int findKey(Map<Integer, String> cities, String city) {
+        Iterator<Map.Entry<Integer, String>> iterator = cities.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<Integer, String> entry = iterator.next();
+            if(entry.getValue().equals(city))
+                return entry.getKey();
+        }
+        return -1;
     }
 
     @Override

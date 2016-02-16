@@ -34,7 +34,7 @@ public class Run {
             }
         }
         KinoTheatreXMLParser.parseXML();
-        Iterator<Map.Entry<Integer, String>> iterator = Controller.getGenres().entrySet().iterator();
+        /*Iterator<Map.Entry<Integer, String>> iterator = Controller.getGenres().entrySet().iterator();
         System.out.println("Genres:");
         System.out.println(Controller.getGenres().size());
         while (iterator.hasNext()){
@@ -110,6 +110,13 @@ public class Run {
         while (iterator11.hasNext()) {
             Map.Entry<Integer, List<Show>> entry = iterator11.next();
             System.out.printf("MovieId - %3s, shows - %s\n", entry.getKey(), entry.getValue());
+        }*/
+        Controller controller = new Controller();
+        /*for (Movie movie : controller.viewAllMovies()) {
+            System.out.println(movie);
+        }*/
+        for (Cinema cinema : controller.viewAllCinemas("Киев")) {
+            System.out.println(cinema);
         }
     }
 

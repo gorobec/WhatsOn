@@ -124,8 +124,8 @@ public class Movie implements Comparable<Movie> {
 
 //todo compareTo
     @Override
-    public int compareTo(Movie o) {
-        return 0;
+    public int compareTo(Movie movie) {
+        return title.compareTo(movie.title);
     }
 
     @Override

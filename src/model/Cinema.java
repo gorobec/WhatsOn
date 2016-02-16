@@ -7,6 +7,26 @@ public class Cinema implements Comparable<Cinema>{
     private final String phone;
     private final String url;
 
+    public int getCityId() {
+        return cityId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public int compareTo(Cinema cinema) {
         return this.name.compareTo(cinema.name);

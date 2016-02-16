@@ -15,7 +15,7 @@ public interface IUserController {
 
     TreeSet<Movie> viewAllMovies();
 
-    TreeSet<Cinema> viewAllCinemas();
+    TreeSet<Cinema> viewAllCinemas(String city);
 
     TreeSet<Movie> viewMoviesByCinema(Cinema cinema);
 //
