@@ -115,9 +115,22 @@ public class Run {
         /*for (Movie movie : controller.viewAllMovies()) {
             System.out.println(movie);
         }*/
-        for (Cinema cinema : controller.viewAllCinemas("Киев")) {
+/*
+        for (Cinema cinema : controller.viewAllCinemas(1)) {
             System.out.println(cinema);
         }
+
+
+*/
+       /* for (Movie movie : controller.showMoviesOnScreen(9)) {
+            System.out.println(movie.getTitle());
+        }*/
+        for (Movie movie : controller.findMovieByName("Апок")) {
+            System.out.println(movie);
+        }
+        /*for (Movie movie : controller.findMoviesByGenre(20, 15)) {
+            System.out.println(movie);
+        }*/
     }
 
     private static boolean needUpdate() {

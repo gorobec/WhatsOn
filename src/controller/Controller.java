@@ -6,10 +6,7 @@ import model.Person;
 import model.Show;
 
 import java.time.LocalDate;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by gorobec on 12.02.16.
@@ -26,6 +23,7 @@ public class Controller implements IUserController {
     private static Map<Integer, String> studios;
     private static Map<Integer, List<Show>> showsByCinema;
     private static Map<Integer, List<Show>> showsByMovie;
+    private static Map<Integer, Integer> cinemasByCities;
 
     public static Map<Integer, List<Show>> getShowsByCinema() {
         return showsByCinema;
@@ -128,8 +126,8 @@ public class Controller implements IUserController {
     }
 
     @Override
-    public TreeSet<Cinema> viewAllCinemas(String city) {
-        int cityId = findKey(Controller.getCities(), city);
+    public TreeSet<Cinema> viewAllCinemas(Integer cityId) {
+//        int cityId = findKey(Controller.getCities(), city);
         TreeSet<Cinema> cinemas = new TreeSet<>();
         Iterator<Map.Entry<Integer, Cinema>> iterator = getCinemas().entrySet().iterator();
         while (iterator.hasNext()){
@@ -142,7 +140,7 @@ public class Controller implements IUserController {
         return cinemas;
     }
 
-    private int findKey(Map<Integer, String> cities, String city) {
+    public int findKey(String city) {
         Iterator<Map.Entry<Integer, String>> iterator = cities.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry<Integer, String> entry = iterator.next();
@@ -153,22 +151,71 @@ public class Controller implements IUserController {
     }
 
     @Override
-    public TreeSet<Movie> viewMoviesByCinema(Cinema cinema) {
+    public TreeSet<Movie> showCinemasMovies(Cinema cinema) {
+//        todo Comparator LocalDate vs. titles
+
+
+
         return null;
     }
 
     @Override
-    public TreeSet<Movie> findMovieByName(String name) {
-        return null;
+    public Set<Movie> findMovieByName(String name) {
+//        todo regEx names
+        Set<Movie> movie = new TreeSet<>();
+        Iterator<Map.Entry<Integer, Movie>> iterator = movies.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<Integer, Movie> entry = iterator.next();
+            // todo regEx
+            if(entry.getValue().getTitle().toLowerCase().contains(name.toLowerCase()) || entry.getValue().getOriginalTitle().toLowerCase().contains(name.toLowerCase())){
+                movie.add(entry.getValue());
+            }
+        }
+        return movie;
     }
 
     @Override
-    public TreeSet<Movie> findMoviesByGenre(String... genre) {
-        return null;
+    public Set<Movie> findMoviesByGenre(Integer... genreId) {
+        Set<Movie> moviesByGenre = new TreeSet<>();
+        Iterator<Map.Entry<Integer, Movie>> iterator = movies.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<Integer, Movie> entry = iterator.next();
+            for (int i = 0; i < genreId.length; i++) {
+                if(entry.getValue().getGenresId().contains(genreId[i])){
+                 moviesByGenre.add(entry.getValue());
+                    break;
+                }
+            }
+        }
+        return moviesByGenre;
+    }
+
+    public Set<Movie> showMoviesOnScreen(int cityId) {
+//todo dates
+        Set<Movie> movies = new TreeSet<>();
+        Iterator<Map.Entry<Integer, List<Show>>> iterator = showsByMovie.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<Integer, List<Show>> entry = iterator.next();
+            List<Show> movieShows = entry.getValue();
+            for (Show movieShow : movieShows) {
+                if((movieShow.getDateBegin().isBefore(LocalDate.now()) || movieShow.getDateBegin().isEqual(LocalDate.now())) &&
+                        (movieShow.getDateEnd().isAfter(LocalDate.now()) || movieShow.getDateEnd().isEqual(LocalDate.now())) &&
+                        cinemas.get(movieShow.getCinemaID()).getCityId() == cityId){
+                    movies.add(getMovies().get(entry.getKey()));
+                    break;
+                }
+            }
+        }
+
+        return movies;
     }
 
     @Override
     public TreeSet<Movie> findMoviesByTime(LocalDate from, LocalDate till) {
         return null;
+    }
+
+    public TreeSet<Movie> findMoviesByTime(LocalDate till) {
+        return findMoviesByTime(LocalDate.now(), till);
     }
 }

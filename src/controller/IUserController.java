@@ -5,6 +5,7 @@ import model.Movie;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -15,13 +16,13 @@ public interface IUserController {
 
     TreeSet<Movie> viewAllMovies();
 
-    TreeSet<Cinema> viewAllCinemas(String city);
+    TreeSet<Cinema> viewAllCinemas(Integer cityId);
 
-    TreeSet<Movie> viewMoviesByCinema(Cinema cinema);
+    TreeSet<Movie> showCinemasMovies(Cinema cinema);
 //
-    TreeSet<Movie> findMovieByName(String name);
-//todo enum
-    TreeSet<Movie>findMoviesByGenre(String... genre);
+    Set<Movie> findMovieByName(String name);
+
+    Set<Movie>findMoviesByGenre(Integer... genreId);
 
     TreeSet<Movie> findMoviesByTime(LocalDate from, LocalDate till);
 //todo return movies by seance

@@ -21,9 +21,21 @@ public class Movie implements Comparable<Movie> {
     private final List<Integer> studios;
     private final String posterURL;
 
-/*
-* Builder pattern for many constructor parameters
-* */
+    public String getTitle() {
+        return title;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public List<Integer> getGenresId() {
+        return genresId;
+    }
+
+    /*
+        * Builder pattern for many constructor parameters
+        * */
     public static class Builder {
         private int id;
         private String title;
