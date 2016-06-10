@@ -5,7 +5,7 @@ import javax.swing.*;
 
 public class Swing {
     public static void main(String[] args) throws InterruptedException {
-    JFrame startFrame = new StartFrame();
+//    JFrame startFrame = new StartFrame();
     JFrame mainFrame = new MainFrame();
     }
 }

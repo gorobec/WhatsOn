@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class Controller implements IUserController {
     private static Map<Integer, Cinema> cinemas;
-    private static Map<Integer, Movie> movies ;
+    private static Map<Integer, Movie> movies;
     private static Map<Integer, Person> persons;
     private static Map<Integer, String> genres;
     private static Map<Integer, String> halls;
