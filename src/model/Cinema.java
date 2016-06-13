@@ -71,6 +71,8 @@ public class Cinema implements Comparable<Cinema>{
         url = builder.url;
     }
 
+
+
     @Override
     public String toString() {
         return "Cinema{" +

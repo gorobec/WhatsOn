@@ -20,7 +20,9 @@ public class MainFrame extends JFrame {
         ImageIcon icon2 = new ImageIcon("/home/gorobec/Java/development/WhatsOn/src/resources/magnifying-glass.png");
 
         JComponent affiche = new JPanel();
-        JComponent cinemas = new JPanel();
+        JScrollPane cinemas = new JScrollPane(new CinemasPane());
+
+        cinemas.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         JComponent soon = new JPanel();
         JComponent search = new JPanel();
         tabbedPane.addTab("Афиша", icon, affiche, "Афиша фиьмов в прокате");
@@ -28,6 +30,8 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Скоро в прокате", icon, soon, "Афиша фиьмов, который выйдут скоро в прокат");
         tabbedPane.addTab("Поиск", icon2, search, "Поиск фиьмов");
         getContentPane().add(tabbedPane);
+        setResizable(false);
         setVisible(true);
+
     }
 }
